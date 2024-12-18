@@ -4,7 +4,7 @@ import useOfficeList from '../hooks/useOfficeList';
 import AppOfficeCardInfo from './AppOfficeCardInfo'
 import AppSearchInput from './AppSearchInput'
 
-const AppListCardInfo = () => {
+const AppOfficeListCardInfo = () => {
 
   const { offices, sortedLocations, toggleOnlineStatus, setOfficeList, setSearchTerm } = useOfficeList();
 
@@ -43,4 +43,4 @@ const AppListCardInfo = () => {
   )
 }
 
-export default AppListCardInfo
+export default AppOfficeListCardInfo

@@ -4,7 +4,7 @@ import { Offices } from '../types';
 
 const useOfficeList = () => {
   // Set Time
-  const time = 60000;
+  const time = 30000;
 
   // Create State
   const [offices, setOffices] = useState<Offices[]>([]);

@@ -1,7 +1,7 @@
 import { FaRegClock, FaRegUser } from "react-icons/fa";
 
 
-type AppCardInfoCardProps = {
+type AppOfficeCardInfoCardProps = {
   name: string
   waiting: number[]
   time: string
@@ -9,7 +9,7 @@ type AppCardInfoCardProps = {
   onToggleStatus: () => void;
 }
 
-const AppCardInfo = ({ name, waiting, time, isDisabled, onToggleStatus }: AppCardInfoCardProps) => {
+const AppOfficeCardInfo = ({ name, waiting, time, isDisabled, onToggleStatus }: AppOfficeCardInfoCardProps) => {
 
   const totalWaiting = waiting.reduce((acc, curr) => acc + curr, 0);
 
@@ -40,4 +40,4 @@ const AppCardInfo = ({ name, waiting, time, isDisabled, onToggleStatus }: AppCar
   )
 }
 
-export default AppCardInfo
+export default AppOfficeCardInfo
