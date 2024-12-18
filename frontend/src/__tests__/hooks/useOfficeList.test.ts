@@ -1,10 +1,10 @@
 import { renderHook, act, waitFor } from '@testing-library/react';
 import { vi, expect, describe, it, beforeEach,  } from 'vitest';
 import useOfficeList from '../../hooks/useOfficeList';
-import { fetchOffices } from '../../services/index';
+import { getOffices } from '../../services/index';
 
 vi.mock('../../services/index', () => ({
-  fetchOffices: vi.fn(),
+  getOffices: vi.fn(),
 }));
 
 describe('useOfficeList', () => {
@@ -60,7 +60,7 @@ describe('useOfficeList', () => {
 
   it('should fetch offices on mount and set interval', async () => {
     const offices = [{ id: 1, name: 'Office 1', online: false }];
-    (fetchOffices as ReturnType<typeof vi.fn>).mockResolvedValue({ succes: true, data: offices });
+    (getOffices as ReturnType<typeof vi.fn>).mockResolvedValue({ succes: true, data: offices });
 
     const { result } = renderHook(() => useOfficeList());
 
@@ -68,7 +68,7 @@ describe('useOfficeList', () => {
       expect(result.current.offices).toEqual(offices);
     });
 
-    expect(fetchOffices).toHaveBeenCalledTimes(1);
+    expect(getOffices).toHaveBeenCalledTimes(1);
     expect(result.current.offices).toEqual(offices);
 
   });

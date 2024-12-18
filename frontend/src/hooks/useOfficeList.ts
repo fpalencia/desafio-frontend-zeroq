@@ -1,5 +1,5 @@
 import { useEffect, useState, useMemo } from 'react';
-import { fetchOffices } from '../services/index'
+import { getOffices } from '../services/index'
 import { Offices } from '../types';
 
 const useOfficeList = () => {
@@ -38,7 +38,7 @@ const useOfficeList = () => {
   useEffect(() => {
     const fetchAndSetOffices = async () => {
       try {
-        const data = await fetchOffices();
+        const data = await getOffices();
         if (data?.succes && data.data) {
           setOffices(data.data);
         }

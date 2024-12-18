@@ -1,7 +1,7 @@
 import apiOffices from "../api";
 import { ResponseOfficesSchema } from "../schema";
 
-export const fetchOffices = async () => {
+export const getOffices = async () => {
 
   try {
     // Fetch Data
