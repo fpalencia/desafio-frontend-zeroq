@@ -18,7 +18,7 @@ app.use((req, res, next) => {
 });
 
 // Declare variables
-const time = 30000
+const time = 60000
 const originalOffices = JSON.parse(JSON.stringify(offices));
 let responseOffices = JSON.parse(JSON.stringify(originalOffices));
 

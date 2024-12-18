@@ -19,9 +19,5 @@ export const getOffices = async () => {
     }
   } catch (error) {
     console.log(error);
-    return {
-      succes: false,
-      error
-    }
   }
 };
