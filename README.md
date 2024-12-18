@@ -1,4 +1,4 @@
-# Deafio Frontend ZeroQ
+# Desafio Frontend ZeroQ
 
 Este proyecto consta de un frontend desarrollado con React y un backend API desarrollado con Node.js.
 
