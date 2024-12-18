@@ -27,7 +27,7 @@ const updateOfficeData = () => {
   responseOffices.forEach((office: Office) => {
     office.lines = office.lines.map(line => {
       const waitingAdjustment = Math.random() < 0.5 ? -1 : 1;
-      const newWaiting = line.waiting + waitingAdjustment;
+      const newWaiting = Math.max(0, line.waiting + waitingAdjustment);
       const averageTimePerPerson = 100; // Define an average time per person
       const newElapsed = Math.max(0, newWaiting * averageTimePerPerson);
 
