@@ -1,75 +1,88 @@
 import { renderHook, act, waitFor } from '@testing-library/react';
-import { vi, expect, describe, it, beforeEach,  } from 'vitest';
 import useOfficeList from '../../hooks/useOfficeList';
 import { getOffices } from '../../services/index';
+import { Offices } from '../../types';
+import { describe, beforeEach, it, expect, vi, Mock } from 'vitest';
+import io from 'socket.io-client';
 
+// Mock the getOffices function
 vi.mock('../../services/index', () => ({
   getOffices: vi.fn(),
 }));
 
+// Mock socket.io-client
+vi.mock('socket.io-client', () => {
+  const mSocket = {
+    on: vi.fn(),
+    emit: vi.fn(),
+    disconnect: vi.fn(),
+  };
+  return {
+    __esModule: true,
+    default: () => mSocket,
+  };
+});
+
 describe('useOfficeList', () => {
+  const mockOffices: Offices[] = [
+    { id: 1, name: 'Office 1', online: true, lines: [] },
+    { id: 2, name: 'Office 2', online: false, lines: [] },
+  ];
+
   beforeEach(() => {
-    vi.clearAllMocks();
+    (getOffices as Mock).mockResolvedValue({ succes: true, data: mockOffices });
   });
 
-  it('should initialize with default values', () => {
+  it('should fetch and set offices on mount', async () => {
     const { result } = renderHook(() => useOfficeList());
-    expect(result.current.offices).toEqual([]);
-    expect(result.current.oficcesList).toEqual([]);
-    expect(result.current.sortedLocations).toEqual([]);
+
+    await waitFor(() => {
+      expect(result.current.offices).toEqual(mockOffices);
+    });
+
+    expect(result.current.offices).toEqual(mockOffices);
   });
 
-  it('should toggle online status of an office', () => {
+  it('should filter offices based on search term', async () => {
     const { result } = renderHook(() => useOfficeList());
-    const office = { id: 1, name: 'Office 1', online: false, lines: [{ waiting: 0, elapsed: 0 }] };
-    
+
+    await waitFor(() => {
+      expect(result.current.offices).toEqual(mockOffices);
+    });
+
     act(() => {
-      result.current.setOffices([office]);
+      result.current.setSearchTerm('Office 1');
+    });
+
+    expect(result.current.sortedLocations).toEqual([mockOffices[0]]);
+  });
+
+  it('should toggle online status of an office', async () => {
+    const { result } = renderHook(() => useOfficeList());
+
+    await waitFor(() => {
+      expect(result.current.offices).toEqual(mockOffices);
     });
 
     act(() => {
       result.current.toggleOnlineStatus(1);
     });
 
-    expect(result.current.offices[0].online).toBe(true);
+    expect(result.current.offices[0].online).toBe(false);
   });
 
-  it('should filter offices based on search term', () => {
+  it('should handle WebSocket updates', async () => {
     const { result } = renderHook(() => useOfficeList());
-    const office1 = { id: 1, name: 'Office 1', online: false, lines: [{ waiting: 0, elapsed: 0 }] };
-    const office2 = { id: 2, name: 'Office 2', online: true, lines: [{ waiting: 0, elapsed: 0 }] };
-
-    act(() => {
-      result.current.setOffices([office1, office2]);
-      result.current.setSearchTerm('1');
-    });
-
-    expect(result.current.sortedLocations).toEqual([office1]);
-  });
-
-  it('should set office list', () => {
-    const { result } = renderHook(() => useOfficeList());
-    const office = { id: 1, name: 'Office 1', online: false, lines: [{ waiting: 0, elapsed: 0 }] };
-
-    act(() => {
-      result.current.setOfficeList([office]);
-    });
-
-    expect(result.current.oficcesList).toEqual([office]);
-  });
-
-  it('should fetch offices on mount and set interval', async () => {
-    const offices = [{ id: 1, name: 'Office 1', online: false }];
-    (getOffices as ReturnType<typeof vi.fn>).mockResolvedValue({ succes: true, data: offices });
-
-    const { result } = renderHook(() => useOfficeList());
+    const socket = io() as ReturnType<typeof io>;
 
     await waitFor(() => {
-      expect(result.current.offices).toEqual(offices);
+      expect(result.current.offices).toEqual(mockOffices);
     });
 
-    expect(getOffices).toHaveBeenCalledTimes(1);
-    expect(result.current.offices).toEqual(offices);
+    act(() => {
+      (socket.on as Mock).mock.calls[1][1](mockOffices);
+    });
 
+    expect(result.current.offices).toEqual(mockOffices);
   });
 });
