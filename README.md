@@ -32,6 +32,7 @@ Este proyecto utiliza **React** con **TypeScript** y **Vite** para crear una apl
 - **vitest**: Para pruebas unitarias.
 - **testing-library**: Para pruebas de componentes React.
 - **react-icons**: Para utilizar íconos en los componentes.
+- **socket.io-client**: Para la comunicación en tiempo real con el backend.
 
 ## Backend
 
@@ -56,8 +57,10 @@ El backend está construido con Node.js y Express, utilizando TypeScript para se
 - **cors**: Habilitar Cross-Origin Resource Sharing
 - **typescript**: Para seguridad de tipos y mejor experiencia de desarrollo
 - **ts-node-dev**: Entorno de ejecución y desarrollo de TypeScript
+- **socket.io**: Para la comunicación en tiempo real con el frontend.
 
 ## 🛠️ Stack Tecnológico
 
 - Frontend: React con TypeScript
 - Backend: Node.js con Express y TypeScript
+- Comunicación en tiempo real: Socket.IO en frontend y backend
