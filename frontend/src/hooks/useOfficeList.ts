@@ -1,11 +1,9 @@
 import { useEffect, useState, useMemo } from 'react';
-import { getOffices } from '../services/index'
+import { getOffices } from '../services/index';
 import { Offices } from '../types';
+import io from 'socket.io-client';
 
 const useOfficeList = () => {
-  // Set Time
-  const time = 60000;
-
   // Create State
   const [offices, setOffices] = useState<Offices[]>([]);
   const [oficcesList, setOfficeList] = useState<Offices[]>(offices);
@@ -49,12 +47,27 @@ const useOfficeList = () => {
 
     // Fetch Offices
     fetchAndSetOffices();
+  }, []);
 
-    // Set Interval
-    const interval = setInterval(fetchAndSetOffices, time);
-    
-    // Clear Interval
-    return () => clearInterval(interval);
+  // Connect to WebSocket
+  useEffect(() => {
+    const socket = io('http://localhost:3001');
+
+    socket.on('connect', () => {
+      console.log('Connected to WebSocket');
+    });
+
+    socket.on('officesUpdate', (updatedOffices: Offices[]) => {
+      setOffices(updatedOffices);
+    });
+
+    socket.on('disconnect', () => {
+      console.log('Disconnected from WebSocket');
+    });
+
+    return () => {
+      socket.disconnect();
+    };
   }, []);
 
   return {
@@ -68,4 +81,4 @@ const useOfficeList = () => {
   };
 }
 
-export default useOfficeList; 
+export default useOfficeList;

@@ -2,14 +2,26 @@ import express from 'express';
 import offices from './data/offices';
 import cors from 'cors';
 import { Office, Line } from './types';
+import { Server } from 'socket.io';
+import { createServer } from 'http';
 
 const app = express();
+const httpServer = createServer(app);
+
+// Set ports
+const port = process.env.PORT || 3000;
+const wsPort = process.env.WS_PORT || 3001;
+
+const io = new Server(httpServer, {
+  cors: {
+    origin: "*",
+  },
+  path: '/socket.io',
+  transports: ['websocket', 'polling'],
+});
 
 // Enable CORS
 app.use(cors());
-
-// Set the port
-const port = process.env.PORT || 3000;
 
 // Middleware to log requests
 app.use((req, res, next) => {
@@ -18,26 +30,41 @@ app.use((req, res, next) => {
 });
 
 // Declare variables
-const time = 60000
+const time = 60000;
 const originalOffices = JSON.parse(JSON.stringify(offices));
 let responseOffices = JSON.parse(JSON.stringify(originalOffices));
 
 // Function to update office data
 const updateOfficeData = () => {
-  responseOffices.forEach((office: Office) => {// Iterate over each office
-    office.lines = office.lines.map((line: Line) => {// Iterate over each line
-      const waitingAdjustment = Math.random() < 0.5 ? -1 : 1; // Randomly increase or decrease the waiting time
-      const newWaiting = Math.max(0, line.waiting + waitingAdjustment); // Ensure waiting time is not negative
-      const averageTimePerPerson = 100; // Define an average time per person
-      const newElapsed = Math.max(0, newWaiting * averageTimePerPerson); // Calculate the new elapsed time
+  responseOffices.forEach((office: Office) => {
+    office.lines = office.lines.map((line: Line) => {
+      const waitingAdjustment = Math.random() < 0.5 ? -1 : 1;
+      const newWaiting = Math.max(0, line.waiting + waitingAdjustment);
+      const averageTimePerPerson = 100;
+      const newElapsed = Math.max(0, newWaiting * averageTimePerPerson);
 
       return {
+        ...line,
         waiting: newWaiting,
         elapsed: newElapsed
       };
     });
   });
+  
+  // Emit updated data to all connected clients
+  console.log('Emitting updated office data');
+  io.emit('officesUpdate', responseOffices);
 };
+
+// Socket connection handler
+io.on('connection', (socket) => {
+  console.log('Client connected');
+  socket.emit('officesUpdate', responseOffices);
+  
+  socket.on('disconnect', () => {
+    console.log('Client disconnected');
+  });
+});
 
 // Update office data every minute
 setInterval(updateOfficeData, time);
@@ -48,12 +75,11 @@ app.get('/offices', (req, res, next) => {
     if (responseOffices.length === 0) {
       res.status(404).json({ message: 'No se encontraron oficinas' });
     } else {
-      res.set('Custom-Header', 'CustomHeaderValue'); // Set a custom header
       res.json(responseOffices);
     }
   } catch (error) {
     console.error(error);
-    next(error); // Pass the error to the error handling middleware
+    next(error);
   }
 });
 
@@ -63,7 +89,12 @@ app.use((err: any, req: express.Request, res: express.Response, next: express.Ne
   res.status(500).send('Servicio no disponible');
 });
 
-// Start the server
+// Start the HTTP server
 app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
+  console.log(`HTTP Server running on port ${port}`);
+});
+
+// Start the WebSocket server
+httpServer.listen(wsPort, () => {
+  console.log(`WebSocket Server running on port ${wsPort}`);
 });
