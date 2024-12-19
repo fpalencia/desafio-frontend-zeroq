@@ -2,11 +2,19 @@
 
 Este proyecto consta de un frontend desarrollado con React y un backend API desarrollado con Node.js.
 
+## 🚀 Comenzando
+
+1. **Clonar el repositorio:**
+    ```sh
+    git clone https://github.com/tu-usuario/desafio-frontend-zeroq.git
+    cd desafio-frontend-zeroq
+    ```
+
 ## Frontend
 
 Este proyecto utiliza **React** con **TypeScript** y **Vite** para crear una aplicación frontend. A continuación, se detallan los pasos para la instalación y ejecución del proyecto, así como las librerías y herramientas utilizadas.
 
-### 🚀 Pasos de Instalación Frontend
+### 💻 Pasos de Instalación Frontend
 
 1. **Instalar las dependencias:**
     ```sh
