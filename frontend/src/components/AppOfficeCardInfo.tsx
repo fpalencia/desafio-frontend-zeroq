@@ -15,7 +15,7 @@ const AppOfficeCardInfo = ({ name, waiting, time, isDisabled, onToggleStatus }: 
   return (
     <div
       className={`flex flex-col h-full rounded-sm overflow-hidden card ${isDisabled ? 'online' : 'offline'}
-      ${!isDisabled ? 'bg-gray-300' : 'bg-[#2d4f83]'}`}
+  ${!isDisabled ? 'bg-gray-300' : 'bg-[#2d4f83]'} transform transition-transform duration-300 hover:scale-105`}
       onClick={onToggleStatus}
     >
       <div className="p-6 flex-1">
